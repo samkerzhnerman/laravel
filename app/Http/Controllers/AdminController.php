@@ -12,7 +12,8 @@ class AdminController extends Controller
     //
 	function admin() {
         if (Auth::check()) {
-        echo "Logged in";
+        $status = Auth::user()->isAdmin();
+        var_dump($status);
         }
         else echo "logged out";
         }

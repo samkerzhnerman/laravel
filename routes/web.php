@@ -20,3 +20,8 @@ Route::get('/admin', 'AdminController@admin')
     ->name('admin');
 
 
+
+
+Route::group(['prefix' => 'admin'], function () {
+    Voyager::routes();
+});
