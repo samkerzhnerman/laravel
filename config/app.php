@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://laravel.int'),
 
     /*
     |--------------------------------------------------------------------------
@@ -148,6 +148,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         TCG\Voyager\VoyagerServiceProvider::class,
 	Intervention\Image\ImageServiceProvider::class,
+        Collective\Html\HtmlServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -210,6 +211,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'Form' => Collective\Html\FormFacade::class,
+        'Html' => Collective\Html\HtmlFacade::class,
 
     ],
 

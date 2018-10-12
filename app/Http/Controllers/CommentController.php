@@ -9,13 +9,15 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function store(Request $request, News $newsItem) {
+    public function store(Request $request) {
 
         $this->validate($request, [
             'body' => 'required|min:2',
             'author' => 'required',
         ]);
-        $newsItem = News::find($request->news_id);
+        $newsItem = News::find($request->post_id);
+
+        $comment = App\Comment::where('news_id','=', $post->id, 'AND', 'is_hidden', '=', 0)
 
         $newsItem->comments()->create([
             'body' => $request->body,
@@ -23,7 +25,7 @@ class CommentController extends Controller
             'news_id' => $request->news_id,
         ]);
 
-        return redirect('/news/' . $newsItem->id . '#comments');
+        return redirect('/post/' . $newsItem->id . '#comments');
 
     }
 
