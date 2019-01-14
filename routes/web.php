@@ -15,25 +15,27 @@ Route::get('/', function () {
     $sliderposts = App\News::orderby('created_at','DESC')->limit('3')->get();
     $categories = App\Category::all();
     $ads = App\Ad::all();
-    $topcommenters = DB::table('comments')->selectRaw('count(id) as countid, username')->groupby('username')->orderByRaw('count(id) desc')->limit(5)->get();
-    $toppostids = DB::table('comments')->selectRaw('count(id) as countid, news_id')
-        ->groupby('news_id')
+    $topcommenters = DB::table('laravellikecomment_comments')->selectRaw('count(id) as countid, user_id')->groupby('user_id')->orderByRaw('count(id) desc')->limit(5)->get();
+    $topcommenternames = [];
+    foreach ($topcommenters as $topcommenter)
+    {
+        $topcommenternames[] = DB::table('users')->where('id','=', $topcommenter->user_id)->first();
+    }
+    $toppostids = DB::table('laravellikecomment_comments')->selectRaw('count(id) as countid, item_id')
+        ->groupby('item_id')
         ->orderByRaw(' count(id) desc')->limit(3)->get();
     //print_r($toppostids);
     //die;
     $toptodayposts = [];
     foreach ($toppostids as $toppostid)
         {
-
-                    $toptodayposts[] = App\News::where('id', '=', $toppostid->news_id)->get();
-
-
-            }
-    return view('home', compact('posts', 'sliderposts', 'categories', 'ads', 'topcommenters','toptodayposts'));
+        $toptodayposts[] = App\News::where('id', '=', $toppostid->item_id)->get();
+        }
+    return view('home', compact('posts', 'sliderposts', 'categories', 'ads', 'topcommenters','toptodayposts','topcommenternames'));
 });
 
 Route::get('post/{title}', function($title){
-	$post = App\News::where('title', '=', $title)->firstOrFail();
+    $post = App\News::where('title', '=', $title)->firstOrFail();
     $categories = App\Category::all();
     $ads = App\Ad::all();
     $tagids = DB::table('news_tags')->select('tag_id')->where('news_id','=', $post->id)->get();
@@ -47,66 +49,18 @@ Route::get('post/{title}', function($title){
         if ($tagid->tag_id == '4') $analytics=TRUE;
     }
 
-    $comments = App\Comment::where('news_id','=', $post->id, 'AND', 'is_hidden', '=', '0')->orderByRaw('likes DESC')->get();
+    $comments = DB::table('laravellikecomment_comments')->where('item_id','=', $post->id)->get();
 	return view('post', compact('post', 'categories', 'tagids', 'tags', 'comments', 'analytics','ads'));
 });
 
 Route::get('searchcomments/{title}', function($title){
     $categories = App\Category::all();
     $ads = App\Ad::all();
-    $comments = App\Comment::where('username','=', $title, 'AND', 'is_hidden', '=', '0')->orderByRaw('likes DESC')->paginate(3);
-    return view('searchcomments', compact('comments', 'categories', 'ads'));
-});
-
-Route::post('addcomment/{message}', function($message){
-    $username = $_POST['username'];
-    $news_id = $_POST['news_id'];
-    $comment = $_POST['comment'];
-    $title = $_POST['title'];
-    $category_id = $_POST['category_id'];
-    $created_at = date_create();
-    $category = App\Category::where('id', '=', $category_id)->firstOrFail();
-    if ($category->id == 2) {
-        DB::table('comments')->insert(
-            [
-                'username' => $username,
-                'news_id' =>  $news_id,
-                'comment' => $comment,
-                'created_at' => $created_at,
-                'is_hidden' => '1'
-
-            ]);
-    }
-    else {
-        DB::table('comments')->insert(
-            [
-                'username' => $username,
-                'news_id' =>  $news_id,
-                'comment' => $comment,
-                'created_at' => $created_at,
-                'is_hidden' => '0'
-
-            ]);
-
-    }
-    return redirect ('post/'. $title);
-});
-
-Route::post('like/{message}', function($message){
-    $title = $_POST['title'];
-    $likes = $_POST['likes'];
-    $likes = ++$likes;
-    DB::table('comments')->where('id', $message)->update(['likes' => $likes]);
-    return redirect ('post/'. $title);
-});
-
-Route::post('unlike/{message}', function($message){
-    $title = $_POST['title'];
-    $likes = $_POST['likes'];
-    $likes = --$likes;
-    if ($likes<0) $likes=0;
-    DB::table('comments')->where('id', $message)->update(['likes' => $likes]);
-    return redirect ('post/'. $title);
+    $comments = DB::table('laravellikecomment_comments')->where('user_id','=', $title)->paginate(5);
+    $totalcomments = count(DB::table('laravellikecomment_comments')->where('user_id','=', $title)->get());
+    $user = DB::table('users')->where('id','=', $title)->first();
+    $posts = App\News::all();
+    return view('searchcomments', compact('comments', 'categories', 'ads', 'user', 'totalcomments', 'posts'));
 });
 
 Route::get('category/{name}', function($title){

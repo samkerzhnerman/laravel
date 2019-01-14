@@ -17,7 +17,7 @@ class CommentController extends Controller
         ]);
         $newsItem = News::find($request->post_id);
 
-        $comment = App\Comment::where('news_id','=', $post->id, 'AND', 'is_hidden', '=', 0)
+        $comment = App\Comment::where('news_id','=', $post->id, 'AND', 'is_hidden', '=', 0);
 
         $newsItem->comments()->create([
             'body' => $request->body,
@@ -40,4 +40,4 @@ class CommentController extends Controller
         return redirect('/news/' . $comment->news_id . '#comments');
     }
 
-}
+} 

@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://laravel.int'),
+    'url' => env('APP_URL', 'http://localhost/public/'),
 
     /*
     |--------------------------------------------------------------------------
@@ -149,6 +149,7 @@ return [
         TCG\Voyager\VoyagerServiceProvider::class,
 	Intervention\Image\ImageServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        risul\LaravelLikeComment\LikeCommentServiceProvider::class,
 
         /*
          * Package Service Providers...

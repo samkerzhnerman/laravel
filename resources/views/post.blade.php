@@ -38,70 +38,11 @@
 							</article>
 							<div class="row">
 								<div class="col-md-12" style="margin-left:20px;">
-									<h2 class="heading-2">{{count($comments)}} комментариев</h2>
-									@foreach ($comments as $comment)
-									<div class="review">
-										<div class="desc">
-											<h4>
-												<span class="text-left">{{$comment->username}}</span>
-												<span class="text-right">{{$comment->created_at}}</span>
-											</h4>
-											@if ($comment->is_hidden == 0)
-											    <p>{{$comment->comment}}</p>
-												@else
-												<p><i>Комментарий ожидает одобрения модератором.</i></p>
-											@endif
-											<p>
-
-											<h4>Likes: {{$comment->likes}}</h4>
-
-											<ul style=" list-style:none; ">
-											<li style="float: left;"><form method="post" action="/like/{{$comment->id}}">
-													{{csrf_field()}}
-													<input type="hidden" id="likes" name="likes" value="{{$comment->likes}}">
-													<input type="hidden" id="title" name="title" value="{{ $post->title }}">
-													<button type="submit" class="btn" style="background-color: #5cb85c;">Like</button>
-												</form></li>
-											<li style="float: left;"><form method="post" action="/unlike/{{$comment->id}}">
-													{{csrf_field()}}
-													<input type="hidden" id="likes" name="likes" value="{{$comment->likes}}">
-													<input type="hidden" id="title" name="title" value="{{ $post->title }}">
-													<button type="submit" class="btn" style="background-color: #e50011;">Unlike</button>
-												</form></li>
-											</ul>
-											</div>
-
-											</p>
-
-										</div>
-									</div>
-									@endforeach
+                                                                    @include('laravelLikeComment::comment', ['comment_item_id' => $post->id, 'comment_category_id' => $post->category_id])
+									
 								</div>
 							</div>
-							<div class="row">
-								<div class="col-md-11" style="margin-left:300px;">
-									@guest
-											<h2 class="heading-2">Комментарии могут вводить только зарегистрированные пользователи!</h2>
-										</div>
-									@else
-									<h2 class="heading-2">Ваш комментарий:</h2>
-									<form method="post" action="/addcomment/{{ $post->id }}">
-										{{ csrf_field() }}
-										<div class="row form-group">
-											<div class="col-md-12">
-												<input type="hidden" id="username" name="username" value="{{ Auth::user()->name }}">
-												<input type="hidden" id="news_id" name="news_id" value="{{ $post->id }}">
-												<input type="hidden" id="title" name="title" value="{{ $post->title }}">
-												<input type="hidden" id="category_id" name="category_id" value="{{ $post->category_id }}">
-												<textarea name="comment" id="message" cols="20" rows="10" class="form-control" placeholder="Введите сюда свой комментарий"></textarea>
-											</div>
-										</div>
-										<div class="form-group">
-											<input type="submit" value="Отправить" class="btn btn-primary">
-										</div>
-									</form>
-									@endguest
-								</div>
+						
 							</div>
 						</div>
 					</div>

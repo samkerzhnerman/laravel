@@ -35,7 +35,7 @@
 							<li class="col-md-5" style="float: left; margin:20px;">
 								<h4>Топ комментаторов:</h4>
 							    @foreach($topcommenters as $topcommenter)
-									<p>Пользователь <a href="/searchcomments/{{ $topcommenter->username }}">{{ $topcommenter->username }}</a> - {{$topcommenter->countid }} комментариев</p>
+									<p>Пользователь <a href="/searchcomments/{{ $topcommenter->user_id }}">{{ $topcommenternames[$topcommenter->user_id-1]->name }}</a> - {{$topcommenter->countid }} комментариев</p>
 								@endforeach
 							</li>
 							<li class="col-md-5" style="float: left;">
